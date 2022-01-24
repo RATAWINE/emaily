@@ -1,8 +1,27 @@
-const Keys = require("../config/keys");
-const stripe = require("stripe")(Keys.stripeSecretKey);
-const requireLoggedIn = require("../middleware/requiredLoggedIn");
+// const Keys = require("../config/keys");
+// const stripe = require("stripe")(Keys.stripeSecretKey);
+// const requireLogin = require("../middleware/middlewares");
+// module.exports = (app) => {
+//   app.post("/api/stripe", requireLogin, async (req, res) => {
+//     const charge = await stripe.charges.create({
+//       amount: 500,
+//       currency: "usd",
+//       description: "$5 for 5 credits",
+//       source: req.body.id,
+//     });
+//     console.log(charge);
+//     req.user.credits += 5;
+//     const user = req.user.save();
+//     res.send(user);
+//   });
+// };
+///fPcF^Ul@SIg$#uPEhk$8rwsE
+const keys = require("../config/keys");
+const stripe = require("stripe")(keys.stripeSecretKey);
+const { requireLogin } = require("../middleware/middlewares");
+
 module.exports = (app) => {
-  app.post("/api/stripe", requireLoggedIn, async (req, res) => {
+  app.post("/api/stripe", requireLogin, async (req, res) => {
     const charge = await stripe.charges.create({
       amount: 500,
       currency: "usd",
@@ -11,7 +30,8 @@ module.exports = (app) => {
     });
     console.log(charge);
     req.user.credits += 5;
-    const user = req.user.save();
+    const user = await req.user.save();
+
     res.send(user);
   });
 };
